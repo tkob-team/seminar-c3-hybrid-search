@@ -15,6 +15,7 @@ EMB_CORPUS = DATA / "emb_corpus.npy"
 EMB_QUERIES = DATA / "emb_queries.npy"
 
 MODEL_NAME = "BAAI/bge-small-en-v1.5"
+MODEL_REVISION = "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a"  # model repo commit used for data/emb_*.npy
 QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 EF_SEARCH = 100  # notes/S03 section 3: must be >= N = 100
 

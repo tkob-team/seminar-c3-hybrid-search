@@ -22,7 +22,7 @@ services:
       retries: 20
       start_period: 10s
 
-  # DB client (load, SQL check, measurement). Run via `docker compose run --rm bench ...` (see Makefile).
+  # Client: dataset download, load, SQL check, measurement. Run via `docker compose run --rm bench ...` (see Makefile).
   bench:
     build:
       context: .
@@ -35,6 +35,7 @@ services:
     environment:
       PGHOST: db
       PGPORT: "5432"
+      HF_HOME: /work/data/raw/.hf-cache   # git-ignored (data/raw/)
     volumes:
       - .:/work
     working_dir: /work

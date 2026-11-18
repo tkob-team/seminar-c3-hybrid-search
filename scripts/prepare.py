@@ -14,7 +14,7 @@ import time
 
 import numpy as np
 
-from common import (DSN, EMB_CORPUS, EMB_QUERIES, MODEL_NAME, QUERY_PREFIX, RESULTS,
+from common import (DSN, EMB_CORPUS, EMB_QUERIES, MODEL_NAME, MODEL_REVISION, QUERY_PREFIX, RESULTS,
                     load_corpus, load_queries, read_sums, sha256, write_sum)
 
 SCHEMA = """
@@ -59,7 +59,7 @@ def embed(corpus, queries):
     import sentence_transformers
     import torch
 
-    model = SentenceTransformer(MODEL_NAME, device="cpu")
+    model = SentenceTransformer(MODEL_NAME, revision=MODEL_REVISION, device="cpu")
     docs = [f"{t} {b}" for _, t, b in corpus]
 
     # timing: 100 documents, after one warm-up call
