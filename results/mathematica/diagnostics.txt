@@ -1,0 +1,6 @@
+queries: 804
+recall@10 A vector-only: 41.65 %
+recall@10 B hybrid (OR): 33.27 %
+recall@10 full-text only (OR, ts_rank): 19.23 %
+queries containing token 'mathematica': 90 / 804 = 11.2 %
+corpus documents matching 'mathematica': 7550 / 16705 = 45.2 %
