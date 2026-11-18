@@ -6,7 +6,7 @@ CSC13114 seminar, topic C3: hybrid search (pgvector HNSW + PostgreSQL full-text,
 
 - **Docker** with Compose v2 (`docker compose`). The database container is limited to **2 CPUs and 4 GB RAM**, so the Docker engine needs at least that much free (we used 4 CPUs / 8 GB for the Docker Desktop WSL 2 VM).
 - **GNU make.** On Windows, install it with `winget install ezwinports.make` (then open a new shell), or run everything from WSL.
-- **Git** and about 200 MB of disk space (the dataset, plus about 37 MB of committed embeddings).
+- **Git** and about 400 MB of disk space (the datasets, plus about 136 MB of committed embeddings for three subforums; see [Other subforums](#other-subforums)).
 - **Python 3.12**, only if you need to re-create the embeddings (`make embed`). Everything that talks to PostgreSQL, including the dataset download, runs in a `bench` container (`python:3.12.10-slim-bookworm` with psycopg 3.3.9), so the host needs no PostgreSQL client library. We chose this because Windows Smart App Control blocks the libpq DLL that ships with `psycopg[binary]`.
 - Internet access on the first run, to pull the Docker images and download the dataset from Hugging Face.
 
@@ -59,3 +59,29 @@ A full run takes a few minutes on our machine. Other targets: `make down` stops 
 | `results/embed_timing.txt` | Time to embed 100 documents on the host CPU, with the machine and library versions |
 
 The same summary table is printed to the terminal at the end of `make measure`.
+
+## Other subforums
+
+Every target takes a `SUBFORUM` variable (default `android`, the main result). The design (SQL, index parameters, `ef_search`, RRF, measurement) is identical; only the dataset changes. Either form works:
+
+```sh
+SUBFORUM=mathematica make prepare
+SUBFORUM=mathematica make measure
+make measure SUBFORUM=gaming
+make measure SUBFORUM=gaming OUT=results/gaming/supplementary-and SQL_B=sql/hybrid_and.sql   # AND variant
+make diagnose SUBFORUM=gaming                                                                # full-text-only recall
+```
+
+For a subforum other than android, files go to `data/raw/<subforum>/` (download, git-ignored), `data/<subforum>/` (embeddings and `SHA256SUMS`), `results/<subforum>/`, and the database `c3_<subforum>`. The table is always `docs`, so the SQL files are shared. Pinned dataset revisions and expected counts are in `scripts/common.py`.
+
+Measured subforums (OR = main design, AND = supplementary `sql/hybrid_and.sql`):
+
+| Subforum | Queries | Results |
+|---|---|---|
+| android | 699 | `results/summary.csv`, `results/supplementary-and/summary.csv`, `results/diagnostics.txt` |
+| mathematica | 804 | `results/mathematica/summary.csv`, `results/mathematica/supplementary-and/summary.csv`, `results/mathematica/diagnostics.txt` |
+| gaming | 1,595 | `results/gaming/summary.csv`, `results/gaming/supplementary-and/summary.csv`, `results/gaming/diagnostics.txt` |
+
+`results/all-subforums.csv` has one row per subforum (recall@10 of A, B-OR, B-AND and full-text only; per-query win/loss/tie; p95 and ratios). Re-build it with `python scripts/summarize_subforums.py`.
+
+Note: `data/gaming/emb_corpus.npy` is 66 MB. That is below GitHub's 100 MB file limit (GitHub warns above 50 MB), so it is committed as a normal file without Git LFS, but it makes the clone slower.
