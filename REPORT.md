@@ -18,7 +18,7 @@ Baseline (vector-only) and the change under test (hybrid with RRF).
 
 ## Held fixed
 
-Subforum android · file embedding (sha256) và model `bge-small-en-v1.5` · PostgreSQL 18 + pgvector 0.8.7 · `m = 16`, `ef_construction = 64`, `ef_search = 100`, iterative scan tắt · N = 100, k = 60 · tsquery OR, `ts_rank`, cấu hình `english` · 2 CPU, 4 GB RAM · warm-up 1 lượt, 5 lượt đo, xen kẽ A/B · p95 nearest-rank · latency chỉ tính thời gian SQL đo ở client.
+Subforum: CQADupStack android (BEIR) · Embeddings: BAAI/bge-small-en-v1.5, normalized, instruction prefix on queries only, embedding files fixed by sha256 · Software: PostgreSQL 18 + pgvector 0.8.7 (pgvector/pgvector:0.8.7-pg18-trixie) · HNSW: m = 16, ef_construction = 64, hnsw.ef_search = 100, iterative scan off · Full-text: 'english' config, OR tsquery, ts_rank · Fusion: RRF, N = 100 candidates per branch, k = 60, top-10 · Resources: container limited to 2 CPUs and 4 GB RAM · Runs: 1 warm-up pass, 5 measured runs, alternating branch order · p95: nearest-rank · Latency: SQL execution time only, measured at the client.
 
 ## Results (median + spread, units)
 
