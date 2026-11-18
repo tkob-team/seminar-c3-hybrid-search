@@ -1,0 +1,9 @@
+model: BAAI/bge-small-en-v1.5
+documents: 100 (first 100 of corpus.jsonl, 'title body', batch_size=32, normalized)
+seconds: 4.11
+device: cpu, torch threads: 12
+processor: 13th Gen Intel(R) Core(TM) i5-13500H
+os: Windows-11-10.0.26200-SP0
+python: 3.12.10, torch 2.15.0+cpu, sentence-transformers 6.3.0
+subforum: gaming
+full embed: 45301 documents + 1595 queries in 1854 s (30.9 min)
