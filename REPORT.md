@@ -34,4 +34,10 @@ Threats to validity and what this measurement does not cover.
 
 ## Sources (link + date read)
 
-References with links and the date each was read.
+- pgvector README (HNSW, `hnsw.ef_search`, iterative scan, Docker tags): https://github.com/pgvector/pgvector — read 2026-11-18; version used: pgvector 0.8.7.
+- Docker image `pgvector/pgvector`: https://hub.docker.com/r/pgvector/pgvector — read 2026-11-18; tag used: `0.8.7-pg18-trixie`.
+- PostgreSQL documentation, Full Text Search (`to_tsquery`, `plainto_tsquery`, `ts_rank`, GIN): https://www.postgresql.org/docs/18/textsearch.html — read 2026-11-18; version used: PostgreSQL 18.7.
+- Model card `BAAI/bge-small-en-v1.5` (384 dimensions, 512 tokens, query instruction): https://huggingface.co/BAAI/bge-small-en-v1.5 — read 2026-11-18; revision used: `5c38ec7c405ec4b44b94cc5a9bb96e735b38267a`.
+- Dataset `mteb/cqadupstack-android` (BEIR CQADupStack android: corpus, queries, test qrels): https://huggingface.co/datasets/mteb/cqadupstack-android — read 2026-11-18; revision used: `e03f271e3f4a75f49787c838a62f671b35bc9004`.
+- sentence-transformers (`SentenceTransformer.encode`, `normalize_embeddings`): https://sbert.net — read 2026-11-18; version used: 6.3.0 (with torch 2.15.0+cpu, transformers 5.23.0).
+- psycopg 3 (`RawCursor` with `$1` placeholders, `COPY`): https://www.psycopg.org/psycopg3/docs/ — read 2026-11-18; version used: psycopg 3.3.9 (`psycopg[binary]`), with pgvector-python 0.5.1.
