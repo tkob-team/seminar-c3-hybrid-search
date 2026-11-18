@@ -22,7 +22,8 @@ import numpy as np
 import psycopg
 from pgvector.psycopg import register_vector
 
-from common import DSN, EF_SEARCH, EMB_QUERIES, RESULTS, SQL, load_corpus, load_qrels, load_queries
+from common import (DSN, EF_SEARCH, EMB_QUERIES, RESULTS, SQL, SUBFORUM, ensure_database, load_corpus,
+                    load_qrels, load_queries)
 
 RUNS = 5
 K = 10
@@ -83,6 +84,7 @@ def main() -> int:
         return (vec,) if branch == "A" else (vec, text)
 
     raw = []  # (run, branch, qid, ms, top10)
+    ensure_database()
     with psycopg.connect(DSN, autocommit=True, cursor_factory=psycopg.RawCursor) as conn:
         ensure_prepared(conn)
         register_vector(conn)
@@ -178,6 +180,7 @@ def main() -> int:
     elapsed = time.perf_counter() - t_start
     (out / "run_info.txt").write_text(
         f"finished_utc: {datetime.now(timezone.utc).isoformat(timespec='seconds')}\n"
+        f"subforum: {SUBFORUM}\n"
         f"measure_seconds: {elapsed:.0f}\n"
         f"postgresql: {pg_version}\npgvector: {pgvector_version}\nhnsw.ef_search: {ef}\n"
         f"client: python {platform.python_version()}, psycopg {psycopg.__version__}, {platform.platform()}\n"

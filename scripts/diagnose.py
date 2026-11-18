@@ -14,7 +14,7 @@ import numpy as np
 import psycopg
 from pgvector.psycopg import register_vector
 
-from common import DSN, EF_SEARCH, EMB_QUERIES, RESULTS, SQL, load_corpus, load_qrels, load_queries
+from common import DSN, EF_SEARCH, EMB_QUERIES, RESULTS, SQL, SUBFORUM, load_corpus, load_qrels, load_queries
 
 K = 10
 N_EXAMPLES = 3
@@ -55,7 +55,8 @@ FROM docs d, q WHERE d.tsv @@ q.tq"""
         register_vector(conn)
         conn.execute(f"SET hnsw.ef_search = {EF_SEARCH}")
         n_docs = conn.execute("SELECT count(*) FROM docs").fetchone()[0]
-        n_android = conn.execute("SELECT count(*) FROM docs WHERE tsv @@ to_tsquery('english', 'android')").fetchone()[0]
+        n_android = conn.execute("SELECT count(*) FROM docs WHERE tsv @@ plainto_tsquery('english', $1)",
+                                 (SUBFORUM,)).fetchone()[0]
         rf = {}
         for q in qids:
             top = [r[0] for r in conn.execute(fts_only, (qvec[q], qtext[q]), prepare=False).fetchall()]
@@ -72,15 +73,15 @@ FROM docs d, q WHERE d.tsv @@ q.tq"""
         lost = sorted((q for q in qids if rb[q] == 0 and ra[q] > 0), key=lambda q: (-ra[q], int(q)))[:N_EXAMPLES]
         examples = {"rescued": [(q, *ranks(q)) for q in rescued], "lost": [(q, *ranks(q)) for q in lost]}
 
-    android_q = sum(bool(re.search(r"\bandroid\b", qtext[q], re.I)) for q in qids)
+    android_q = sum(bool(re.search(rf"\b{re.escape(SUBFORUM)}\b", qtext[q], re.I)) for q in qids)
     fts_recall = 100 * statistics.mean(rf.values())
     lines = [
         f"queries: {len(qids)}",
         f"recall@10 A vector-only: {100 * statistics.mean(ra.values()):.2f} %",
         f"recall@10 B hybrid (OR): {100 * statistics.mean(rb.values()):.2f} %",
         f"recall@10 full-text only (OR, ts_rank): {fts_recall:.2f} %",
-        f"queries containing token 'android': {android_q} / {len(qids)} = {100 * android_q / len(qids):.1f} %",
-        f"corpus documents matching 'android': {n_android} / {n_docs} = {100 * n_android / n_docs:.1f} %",
+        f"queries containing token '{SUBFORUM}': {android_q} / {len(qids)} = {100 * android_q / len(qids):.1f} %",
+        f"corpus documents matching '{SUBFORUM}': {n_android} / {n_docs} = {100 * n_android / n_docs:.1f} %",
     ]
     (RESULTS / "diagnostics.txt").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
     print("\n".join(lines))

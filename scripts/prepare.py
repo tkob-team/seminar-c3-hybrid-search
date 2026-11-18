@@ -14,7 +14,8 @@ import time
 
 import numpy as np
 
-from common import (DSN, EMB_CORPUS, EMB_QUERIES, MODEL_NAME, MODEL_REVISION, QUERY_PREFIX, RESULTS,
+from common import (DSN, EMB_CORPUS, EMB_QUERIES, MODEL_NAME, MODEL_REVISION, QUERY_PREFIX, RESULTS, SUBFORUM,
+                    ensure_database,
                     load_corpus, load_queries, read_sums, sha256, write_sum)
 
 SCHEMA = """
@@ -67,7 +68,7 @@ def embed(corpus, queries):
     t0 = time.perf_counter()
     model.encode(docs[:100], normalize_embeddings=True, batch_size=32)
     secs = time.perf_counter() - t0
-    RESULTS.mkdir(exist_ok=True)
+    RESULTS.mkdir(parents=True, exist_ok=True)
     (RESULTS / "embed_timing.txt").write_text(
         f"model: {MODEL_NAME}\n"
         f"documents: 100 (first 100 of corpus.jsonl, 'title body', batch_size=32, normalized)\n"
@@ -84,7 +85,11 @@ def embed(corpus, queries):
     ec = model.encode(docs, normalize_embeddings=True, batch_size=32, show_progress_bar=True).astype(np.float32)
     eq = model.encode([QUERY_PREFIX + t for _, t in queries], normalize_embeddings=True,
                       batch_size=32).astype(np.float32)
-    print(f"embedded {len(docs)} docs + {len(queries)} queries in {time.perf_counter() - t0:.0f} s")
+    full_secs = time.perf_counter() - t0
+    print(f"embedded {len(docs)} docs + {len(queries)} queries in {full_secs:.0f} s")
+    with open(RESULTS / "embed_timing.txt", "a", encoding="utf-8", newline="\n") as f:
+        f.write(f"subforum: {SUBFORUM}\nfull embed: {len(docs)} documents + {len(queries)} queries "
+                f"in {full_secs:.0f} s ({full_secs / 60:.1f} min)\n")
     np.save(EMB_CORPUS, ec)
     np.save(EMB_QUERIES, eq)
     write_sum("emb_corpus.npy", sha256(EMB_CORPUS))
@@ -98,6 +103,7 @@ def vec_text(v) -> str:
 def load(corpus, ec):
     import psycopg
 
+    ensure_database()
     with psycopg.connect(DSN, autocommit=True) as conn:
         conn.execute(SCHEMA)
         t0 = time.perf_counter()

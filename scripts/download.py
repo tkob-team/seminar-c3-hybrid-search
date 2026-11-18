@@ -1,10 +1,10 @@
-"""S08: download BEIR CQADupStack android (mteb/cqadupstack-android) at a pinned revision.
+"""S08: download a BEIR CQADupStack subforum (mteb/cqadupstack-<SUBFORUM>) at a pinned revision.
 
-Writes the raw files to data/raw/ (git-ignored), checks the expected counts
-(22,998 docs / 699 queries / 1,696 qrels lines) and writes data/SHA256SUMS.
-If data/SHA256SUMS already exists, the downloaded files must match it.
+Default SUBFORUM=android: writes data/raw/ (git-ignored), checks the expected counts
+(22,998 docs / 699 queries / 1,696 qrels lines) and data/SHA256SUMS.
+Other subforums: data/raw/<s>/ and data/<s>/SHA256SUMS (see scripts/common.py).
+If the checksum file already lists the raw files, the downloaded files must match it.
 """
-import hashlib
 import json
 import shutil
 import sys
@@ -12,22 +12,9 @@ from pathlib import Path
 
 from huggingface_hub import hf_hub_download
 
-REPO_ID = "mteb/cqadupstack-android"
-REVISION = "e03f271e3f4a75f49787c838a62f671b35bc9004"  # pinned commit (2025-05-04)
+from common import EXPECTED, RAW, RAW_REL, REVISIONS, ROOT, SUBFORUM, SUMS, read_sums, sha256, write_sum
+
 FILES = ["corpus.jsonl", "queries.jsonl", "qrels/test.tsv"]
-EXPECTED = {"corpus": 22998, "queries": 699, "qrels": 1696}
-
-ROOT = Path(__file__).resolve().parent.parent
-RAW = ROOT / "data" / "raw"
-SUMS = ROOT / "data" / "SHA256SUMS"
-
-
-def sha256(path: Path) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def count_jsonl(path: Path) -> int:
@@ -43,13 +30,14 @@ def count_qrels(path: Path) -> int:
 
 
 def main() -> int:
+    repo = f"mteb/cqadupstack-{SUBFORUM}"
     RAW.mkdir(parents=True, exist_ok=True)
     for name in FILES:
-        src = hf_hub_download(REPO_ID, name, repo_type="dataset", revision=REVISION)
+        src = hf_hub_download(repo, name, repo_type="dataset", revision=REVISIONS[SUBFORUM])
         dst = RAW / name
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(src, dst)
-        print(f"downloaded {name}")
+        print(f"downloaded {repo}@{REVISIONS[SUBFORUM][:7]} {name}")
 
     counts = {
         "corpus": count_jsonl(RAW / "corpus.jsonl"),
@@ -57,20 +45,25 @@ def main() -> int:
         "qrels": count_qrels(RAW / "qrels" / "test.tsv"),
     }
     print("counts:", json.dumps(counts))
-    if counts != EXPECTED:
-        print(f"ERROR: counts differ from expected {EXPECTED}", file=sys.stderr)
+    expected = EXPECTED.get(SUBFORUM)
+    if expected is None:
+        print(f"note: no expected counts recorded for {SUBFORUM}")
+    elif counts != expected:
+        print(f"ERROR: counts differ from expected {expected}", file=sys.stderr)
         return 1
 
-    lines = [f"{sha256(RAW / n)}  raw/{n}" for n in FILES]
-    if SUMS.exists():
-        expected = [l for l in SUMS.read_text(encoding="utf-8").splitlines() if l.startswith(tuple("0123456789abcdef")) and "  raw/" in l]
-        if sorted(expected) != sorted(lines):
-            print("ERROR: checksums differ from data/SHA256SUMS", file=sys.stderr)
+    actual = {f"{RAW_REL}/{n}": sha256(RAW / n) for n in FILES}
+    known = read_sums()
+    if all(k in known for k in actual):
+        if any(known[k] != v for k, v in actual.items()):
+            print(f"ERROR: checksums differ from {SUMS}", file=sys.stderr)
             return 1
-        print("checksums match data/SHA256SUMS")
+        print(f"checksums match {SUMS.relative_to(ROOT).as_posix()}")
     else:
-        SUMS.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
-        print("wrote data/SHA256SUMS")
+        SUMS.parent.mkdir(parents=True, exist_ok=True)
+        for k, v in actual.items():
+            write_sum(k, v)
+        print(f"wrote raw checksums to {SUMS.relative_to(ROOT).as_posix()}")
     return 0
 
 
