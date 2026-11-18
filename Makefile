@@ -40,8 +40,11 @@ check: up bench-image
 	$(BENCH) python scripts/check_sql.py
 
 ## measure: warm-up + 5 alternating runs -> results/raw.csv, results/summary.csv
+##   optional: make measure OUT=results/repeat-2 SQL_B=sql/hybrid_and.sql
+OUT   ?= results
+SQL_B ?= sql/hybrid.sql
 measure: up download bench-image
-	$(BENCH) python scripts/measure.py
+	$(BENCH) python scripts/measure.py --out $(OUT) --sql-b $(SQL_B)
 
 ## embed: (host) re-create data/emb_*.npy with sentence-transformers; only needed if checksums differ
 embed: venv

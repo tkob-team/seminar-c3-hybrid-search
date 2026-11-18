@@ -1,0 +1,9 @@
+finished_utc: 2026-11-18T13:16:49+00:00
+measure_seconds: 123
+postgresql: 18.7 (Debian 18.7-1.pgdg13+2)
+pgvector: 0.8.7
+hnsw.ef_search: 100
+client: python 3.12.10, psycopg 3.3.9, Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36
+client_cpus_visible: 4
+runs: 5 (+1 warm-up), queries: 699, branches: A=vector_only.sql B=hybrid.sql
+deterministic_top10_across_runs: True

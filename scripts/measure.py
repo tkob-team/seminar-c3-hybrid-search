@@ -5,7 +5,10 @@ alternating branch order (odd runs A->B, even runs B->A). Latency = perf_counter
 around execute() + fetchall() at the client, SQL only.
 
 Writes results/raw.csv, results/summary.csv, results/run_info.txt.
+Options: --out DIR (default results/) and --sql-b FILE (default sql/hybrid.sql),
+used for repeats and supplementary variants without overwriting the main results.
 """
+import argparse
 import csv
 import math
 import platform
@@ -13,6 +16,7 @@ import statistics
 import sys
 import time
 from datetime import datetime, timezone
+from pathlib import Path
 
 import numpy as np
 import psycopg
@@ -60,6 +64,12 @@ def med_range(xs):
 
 
 def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", default=str(RESULTS))
+    ap.add_argument("--sql-b", default=str(SQL / "hybrid.sql"))
+    args = ap.parse_args()
+    out = Path(args.out)
+    sql_b = Path(args.sql_b)
     t_start = time.perf_counter()
     queries = load_queries()
     qrels = load_qrels()
@@ -67,7 +77,7 @@ def main() -> int:
     assert eq.shape[0] == len(queries)
     items = [(qid, text, eq[i]) for i, (qid, text) in enumerate(queries) if qid in qrels]
     sql = {"A": (SQL / "vector_only.sql").read_text(encoding="utf-8"),
-           "B": (SQL / "hybrid.sql").read_text(encoding="utf-8")}
+           "B": sql_b.read_text(encoding="utf-8")}
 
     def params(branch, text, vec):
         return (vec,) if branch == "A" else (vec, text)
@@ -100,8 +110,8 @@ def main() -> int:
                 run_branch(b, run)
             print(f"run {run} done ({'->'.join(order)})")
 
-    RESULTS.mkdir(exist_ok=True)
-    with open(RESULTS / "raw.csv", "w", newline="", encoding="utf-8") as f:
+    out.mkdir(parents=True, exist_ok=True)
+    with open(out / "raw.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f, lineterminator="\n")
         w.writerow(["run", "branch", "query_id", "ms", "top10_ids"])
         for run, b, qid, ms, top in raw:
@@ -160,19 +170,19 @@ def main() -> int:
     for r in range(1, RUNS + 1):
         rows.append((f"recall@10 run {r}", "%", f"{per_run_recall[(r, 'A')]:.2f}", f"{per_run_recall[(r, 'B')]:.2f}",
                      "", "", ""))
-    with open(RESULTS / "summary.csv", "w", newline="", encoding="utf-8") as f:
+    with open(out / "summary.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f, lineterminator="\n")
         w.writerow(["metric", "unit", "A_vector_only", "B_hybrid", "delta_B_minus_A", "ratio_B_over_A", "note"])
         w.writerows(rows)
 
     elapsed = time.perf_counter() - t_start
-    (RESULTS / "run_info.txt").write_text(
+    (out / "run_info.txt").write_text(
         f"finished_utc: {datetime.now(timezone.utc).isoformat(timespec='seconds')}\n"
         f"measure_seconds: {elapsed:.0f}\n"
         f"postgresql: {pg_version}\npgvector: {pgvector_version}\nhnsw.ef_search: {ef}\n"
         f"client: python {platform.python_version()}, psycopg {psycopg.__version__}, {platform.platform()}\n"
         f"client_cpus_visible: {__import__('os').cpu_count()}\n"
-        f"runs: {RUNS} (+1 warm-up), queries: {len(qids)}, branches: A=vector_only.sql B=hybrid.sql\n"
+        f"runs: {RUNS} (+1 warm-up), queries: {len(qids)}, branches: A=vector_only.sql B={sql_b.name}\n"
         f"deterministic_top10_across_runs: {deterministic}\n",
         encoding="utf-8", newline="\n")
 
