@@ -1,0 +1,6 @@
+queries: 1595
+recall@10 A vector-only: 69.98 %
+recall@10 B hybrid (OR): 63.51 %
+recall@10 full-text only (OR, ts_rank): 47.27 %
+queries containing token 'gaming': 2 / 1595 = 0.1 %
+corpus documents matching 'gaming': 13784 / 45301 = 30.4 %

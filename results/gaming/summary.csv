@@ -1,0 +1,21 @@
+metric,unit,A_vector_only,B_hybrid,delta_B_minus_A,ratio_B_over_A,note
+queries,count,1595,1595,,,queries with qrels; each run
+recall@10,%,69.98,63.51,-6.48,0.907,delta in percentage points; identical in all 5 runs
+nDCG@10,score,0.5612,0.5067,-0.0545,0.903,secondary
+per-query recall B vs A,count,,,,,B>A 93; B<A 226; B=A 1276; A=0 & B>0 69; B=0 & A>0 167
+p95 median,ms,2.35,47.86,+45.51,20.40,"median of 5 runs, nearest-rank p95"
+p95 min,ms,2.20,47.15,,,
+p95 max,ms,4.57,51.29,,,
+p50 median,ms,1.67,16.06,+14.40,9.64,secondary
+p50 min,ms,1.66,16.03,,,
+p50 max,ms,2.04,17.71,,,
+p95 run 1,ms,4.57,51.29,,,order A->B
+p95 run 2,ms,2.20,50.92,,,order B->A
+p95 run 3,ms,2.31,47.86,,,order A->B
+p95 run 4,ms,2.35,47.15,,,order B->A
+p95 run 5,ms,2.40,47.73,,,order A->B
+recall@10 run 1,%,69.98,63.51,,,
+recall@10 run 2,%,69.98,63.51,,,
+recall@10 run 3,%,69.98,63.51,,,
+recall@10 run 4,%,69.98,63.51,,,
+recall@10 run 5,%,69.98,63.51,,,
