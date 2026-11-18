@@ -1,5 +1,7 @@
 -- Branch B: hybrid = HNSW vector top-100 + full-text (OR tsquery, ts_rank) top-100, fused with RRF (k = 60).
 -- Source: notes/S04 section 3. $1 = query vector (vector(384)), $2 = query text.
+-- Deviation from the notes: ", d.id" added to the fts ordering so ts_rank ties (and the LIMIT 100 cut)
+-- are deterministic; without it 2 of 699 queries changed top-10 between runs.
 WITH vec AS (
   SELECT id, row_number() OVER (ORDER BY embedding <=> $1) AS r
   FROM docs ORDER BY embedding <=> $1 LIMIT 100
@@ -8,9 +10,9 @@ q AS (
   SELECT to_tsquery('english', replace(plainto_tsquery('english', $2)::text, '&', '|')) AS tq
 ),
 fts AS (
-  SELECT d.id, row_number() OVER (ORDER BY ts_rank(d.tsv, q.tq) DESC) AS r
+  SELECT d.id, row_number() OVER (ORDER BY ts_rank(d.tsv, q.tq) DESC, d.id) AS r
   FROM docs d, q WHERE d.tsv @@ q.tq
-  ORDER BY ts_rank(d.tsv, q.tq) DESC LIMIT 100
+  ORDER BY ts_rank(d.tsv, q.tq) DESC, d.id LIMIT 100
 )
 SELECT id
 FROM vec FULL OUTER JOIN fts USING (id)
