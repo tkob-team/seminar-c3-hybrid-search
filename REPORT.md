@@ -15,7 +15,7 @@ In PostgreSQL with pgvector, how much does hybrid search (HNSW vector search fus
 - **Software:** PostgreSQL 18.7 + pgvector 0.8.7 (`pgvector/pgvector:0.8.7-pg18-trixie`). Client: Python 3.12 + psycopg 3.3.9, in a separate container on the same Docker network.
 - **Machine:** i5-13500H (12 cores / 16 threads), 16 GB RAM, Windows 11, Docker Desktop on WSL2. The database container is limited to 2 CPUs / 4 GB.
 - **Data:** BEIR CQADupStack via `mteb/cqadupstack-*` (pinned revisions): android 22,998 docs / 699 queries (main); mathematica 16,705 / 804; gaming 45,301 / 1,595.
-- **Embeddings:** `BAAI/bge-small-en-v1.5`, computed once on CPU (15.7 s per 100 docs), stored and checked by sha256.
+- **Embeddings:** `BAAI/bge-small-en-v1.5`, computed once on CPU (per 100 docs: android 15.7 s, mathematica 17.0 s, gaming 4.1 s; varies with document length), stored and checked by sha256.
 - **Load:** one connection, one query at a time; 1 warm-up pass + 5 runs per branch, branch order alternated. Latency = SQL execute + fetch at the client; query embedding not included.
 
 ## Baseline and change
@@ -35,7 +35,7 @@ Recall@10 was identical in all 5 runs of every measurement, so it has no spread.
 
 | Subforum | recall@10 A → B (%) | Δ (pp) | B better/worse/same | p95 A (ms) | p95 B (ms) | B/A |
 |---|---|---|---|---|---|---|
-| android | 60.63 → 50.54 | −10.09 | 33/133/533 | 2.12 (1.45–2.50) | 44.80 (41.30–48.90) | 21.1× |
+| android | 60.63 → 50.54 | −10.09 | 33/133/533 | 2.12 (1.45–2.50) | 44.80 (41.30–48.90) | 21.2× |
 | mathematica | 41.65 → 33.27 | −8.38 | 32/117/655 | 2.15 (1.86–2.19) | 55.75 (55.00–57.72) | 25.9× |
 | gaming | 69.98 → 63.51 | −6.48 | 93/226/1276 | 2.35 (2.20–4.57) | 47.86 (47.15–51.29) | 20.4× |
 
