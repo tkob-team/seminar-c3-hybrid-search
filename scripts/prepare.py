@@ -14,8 +14,8 @@ import time
 
 import numpy as np
 
-from common import (DSN, EMB_CORPUS, EMB_QUERIES, MODEL_NAME, MODEL_REVISION, QUERY_PREFIX, RESULTS, SUBFORUM,
-                    ensure_database,
+from common import (DSN, EMB_CORPUS, EMB_QUERIES, MODEL_NAME, MODEL_REVISION, QUERY_PREFIX, RESULTS, ROOT, SUBFORUM,
+                    SUMS, ensure_database,
                     load_corpus, load_queries, read_sums, sha256, write_sum)
 
 SCHEMA = """
@@ -125,10 +125,11 @@ def main() -> int:
     embed_only = "--embed-only" in sys.argv
     corpus, queries = load_corpus(), load_queries()
     if emb_ok(EMB_CORPUS, "emb_corpus.npy") and emb_ok(EMB_QUERIES, "emb_queries.npy"):
-        print("embeddings present and sha256 matches data/SHA256SUMS: skipping embed")
+        print(f"embeddings present and sha256 matches {SUMS.relative_to(ROOT).as_posix()}: skipping embed")
     else:
         if read_sums().get("emb_corpus.npy") and EMB_CORPUS.exists():
-            print("WARNING: embedding file does not match data/SHA256SUMS; re-embedding", file=sys.stderr)
+            print(f"WARNING: embedding file does not match {SUMS.relative_to(ROOT).as_posix()}; re-embedding",
+                  file=sys.stderr)
         try:
             embed(corpus, queries)
         except ImportError as e:

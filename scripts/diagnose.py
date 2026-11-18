@@ -14,7 +14,7 @@ import numpy as np
 import psycopg
 from pgvector.psycopg import register_vector
 
-from common import DSN, EF_SEARCH, EMB_QUERIES, RESULTS, SQL, SUBFORUM, load_corpus, load_qrels, load_queries
+from common import DSN, EF_SEARCH, EMB_QUERIES, RESULTS, ROOT, SQL, SUBFORUM, load_corpus, load_qrels, load_queries
 
 K = 10
 N_EXAMPLES = 3
@@ -108,7 +108,7 @@ FROM docs d, q WHERE d.tsv @@ q.tq"""
                 md.append(f"| {d} | {t} | {fmt(v.get(d), 100)} | {fmt(f_.get(d))} |")
             md.append("")
     (RESULTS / "examples.md").write_text("\n".join(md), encoding="utf-8", newline="\n")
-    print("wrote results/examples.md")
+    print(f"wrote {(RESULTS / 'examples.md').relative_to(ROOT).as_posix()}")
 
 
 if __name__ == "__main__":
