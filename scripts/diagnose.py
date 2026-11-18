@@ -92,7 +92,7 @@ FROM docs d, q WHERE d.tsv @@ q.tq"""
         return str(rank)
 
     md = ["# Examples: queries where hybrid (B) differs from vector-only (A)", "",
-          "Source: run 1 of `results/raw.csv`; ranks from `sql/hybrid.sql` CTEs at `hnsw.ef_search = 100`.",
+          f"Source: run 1 of `{(RESULTS / 'raw.csv').relative_to(ROOT).as_posix()}`; ranks from `sql/hybrid.sql` CTEs at `hnsw.ef_search = 100`.",
           "`vec rank` is the position in the HNSW top-100 (`>100` = not in it). `fts rank` is the position by",
           "`ts_rank` among all documents matching the OR tsquery (only ranks 1-100 enter RRF).", ""]
     for kind, title in (("rescued", "Hybrid rescued (A recall@10 = 0, B > 0)"),

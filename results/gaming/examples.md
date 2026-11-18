@@ -1,6 +1,6 @@
 # Examples: queries where hybrid (B) differs from vector-only (A)
 
-Source: run 1 of `results/raw.csv`; ranks from `sql/hybrid.sql` CTEs at `hnsw.ef_search = 100`.
+Source: run 1 of `results/gaming/raw.csv`; ranks from `sql/hybrid.sql` CTEs at `hnsw.ef_search = 100`.
 `vec rank` is the position in the HNSW top-100 (`>100` = not in it). `fts rank` is the position by
 `ts_rank` among all documents matching the OR tsquery (only ranks 1-100 enter RRF).
 
