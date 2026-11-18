@@ -1,0 +1,6 @@
+queries: 699
+recall@10 A vector-only: 60.63 %
+recall@10 B hybrid (OR): 50.54 %
+recall@10 full-text only (OR, ts_rank): 35.40 %
+queries containing token 'android': 175 / 699 = 25.0 %
+corpus documents matching 'android': 10823 / 22998 = 47.1 %
