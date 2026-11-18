@@ -1,0 +1,4 @@
+# bench container: DB client only (load, query check, measurement). No torch needed.
+numpy==2.5.5
+psycopg[binary]==3.3.9
+pgvector==0.5.1

@@ -1,0 +1,9 @@
+# Host .venv (Python 3.12): download + embedding. Pinned versions used for the committed results.
+huggingface_hub==2.4.0
+sentence-transformers==6.3.0
+transformers==5.23.0
+torch==2.15.0
+numpy==2.5.5
+# DB client libs (also installed in the bench container, see docker/requirements-bench.txt)
+psycopg[binary]==3.3.9
+pgvector==0.5.1

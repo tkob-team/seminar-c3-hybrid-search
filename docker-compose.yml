@@ -22,5 +22,22 @@ services:
       retries: 20
       start_period: 10s
 
+  # DB client (load, SQL check, measurement). Run via `docker compose run --rm bench ...` (see Makefile).
+  bench:
+    build:
+      context: .
+      dockerfile: docker/bench.Dockerfile
+    image: c3-bench:local
+    profiles: ["tools"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGPORT: "5432"
+    volumes:
+      - .:/work
+    working_dir: /work
+
 volumes:
   pgdata:
