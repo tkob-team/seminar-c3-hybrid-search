@@ -1,0 +1,26 @@
+# Postgres + pgvector for the C3 measurement. Versions and limits: notes/S03 section 4.
+services:
+  db:
+    image: pgvector/pgvector:0.8.7-pg18-trixie   # pinned: pgvector 0.8.7 on PostgreSQL 18
+    container_name: c3-pgvector
+    environment:
+      POSTGRES_USER: c3
+      POSTGRES_PASSWORD: c3
+      POSTGRES_DB: c3
+    command: ["postgres", "-c", "maintenance_work_mem=1GB"]
+    ports:
+      - "${PGPORT_HOST:-5432}:5432"
+    cpus: "2"
+    mem_limit: 4g
+    shm_size: 1g
+    volumes:
+      - pgdata:/var/lib/postgresql   # PostgreSQL 18 images use /var/lib/postgresql (not .../data)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U c3 -d c3"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+volumes:
+  pgdata:
