@@ -4,6 +4,8 @@ Inputs per subforum (android uses results/, others results/<s>/):
   summary.csv (A vs B-OR, main design), supplementary-and/summary.csv (A vs B-AND),
   diagnostics.txt (full-text-only recall@10); screening criteria from results/subforum-screening.csv.
 p95 A is taken from the OR measurement (A is identical SQL in both).
+Deltas and p95 ratios are copied from summary.csv, where measure.py computes them from the
+unrounded medians (dividing the rounded medians shown here would differ in the 2nd decimal).
 """
 import csv
 import re
@@ -53,8 +55,8 @@ def main():
             "p95_A_ms": f"{p95a:.2f}",
             "p95_B_or_ms": f"{p95o:.2f}",
             "p95_B_and_ms": f"{p95n:.2f}",
-            "p95_ratio_B_or": f"{p95o / p95a:.2f}",
-            "p95_ratio_B_and": f"{p95n / float(a['p95 median']['A_vector_only']):.2f}",
+            "p95_ratio_B_or": o["p95 median"]["ratio_B_over_A"],
+            "p95_ratio_B_and": a["p95 median"]["ratio_B_over_A"],
         })
     with open(RES / "all-subforums.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator="\n")
