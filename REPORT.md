@@ -39,9 +39,9 @@ Recall@10 was identical in all 5 runs of every measurement, so it has no spread.
 | mathematica | 41.65 → 33.27 | −8.38 | 32/117/655 | 2.15 (1.86–2.19) | 55.75 (55.00–57.72) | 25.9× |
 | gaming | 69.98 → 63.51 | −6.48 | 93/226/1276 | 2.35 (2.20–4.57) | 47.86 (47.15–51.29) | 20.4× |
 
-nDCG@10 (secondary) drops the same way (0.476 → 0.401, 0.297 → 0.238, 0.561 → 0.507). Three separate `make measure` runs on android gave p95 B = 44.80 / 44.28 / 43.40 ms (A = 2.12 / 2.33 / 2.25 ms) with identical recall.
+nDCG@10 (secondary) drops the same way (0.476 → 0.401, 0.297 → 0.238, 0.561 → 0.507). Four separate `make measure` runs on android (18–19 Nov) gave p95 B = 44.80 / 44.28 / 43.40 / 41.52 ms (A = 2.12 / 2.33 / 2.25 / 1.44 ms) with identical recall.
 
-<!-- S14: internal rerun on another machine — fill after the rerun (machine, recall A/B, p95 B/A ratio, README issues). -->
+**Rerun on another machine (S14):** i5-12500H, 16 GB, Windows 11, Docker Desktop 4.99 on WSL2, commit `1337749`, setup 2 min 44 s. recall@10 and per-query better/worse/same were identical (60.63 / 50.54; 33 / 133 / 533). nDCG@10 B was 0.4004 vs 0.4010 (cause not determined; possibly the rebuilt HNSW index). p95 A = 1.98 ms, B = 49.70 ms (+47.7 ms, 25.1×). The rerun found two README gaps, now fixed (`notes/S14-red-team-noi-bo.md`).
 
 **Why hybrid lost.** The median OR query matches 41% of the android corpus (mathematica 31%, gaming 14%). `ts_rank`, which is not BM25, ranks these thousands of weak matches poorly. So full-text alone reaches only 35.4% recall@10, against 60.6% for vector (mathematica 19.2 vs 41.7, gaming 47.3 vs 70.0).
 
@@ -50,6 +50,8 @@ RRF then weighs both lists equally. A document ranked about 30th in *both* lists
 The loss shrinks as the OR query gets narrower: −10.1 → −8.4 → −6.5 pp for matched share 41% → 31% → 14%. With only three subforums, this is a pattern, not a proof.
 
 **Why it is slower.** Broad OR queries make PostgreSQL scan the table instead of using the GIN index, and compute `ts_rank` for every matching row.
+
+**Other costs.** The full-text branch adds a tsvector column and a GIN index: 19.6 / 26.9 / 31.8 MB (android / mathematica / gaming), updated on every write; rebuilding the GIN index on android took 0.34 s. PostgreSQL ships 30 text search configurations and none is Vietnamese, so Vietnamese text would fall back to `simple` (no stemming) (`results/storage.csv`, `results/textsearch-configs.txt`).
 
 **Supplementary, not the answer: hybrid with an AND full-text query.**
 
@@ -71,7 +73,7 @@ The loss shrinks as the OR query gets narrower: −10.1 → −8.4 → −6.5 pp
 - **Full-text ranking:** `ts_rank` is not BM25, and we tested no other full-text engine.
 - **Fusion settings:** RRF k = 60, N = 100, equal weights; no other values were tested.
 - **Subforums:** 3 of 12. mathematica and gaming were chosen after the android result, by a criterion written down before measuring them (`notes/S23-subforum-khac.md`, `results/subforum-screening.csv`). All measured subforums are reported here.
-- **Latency:** one machine, Docker on WSL2, one client, no concurrent load. Absolute ms will differ elsewhere; the B/A ratio should transfer better.
+- **Latency:** across 5 measurements on 2 machines, hybrid-OR added +40 to +48 ms p95 (19–29×); neither the ms difference nor the ratio is machine-independent. One client, no concurrent load.
 - **Inputs and AND variant:** queries are titles only; documents are truncated at 512 tokens. AND is one supplementary configuration; its gaming gain is small (p ≈ 0.04, uncorrected for three comparisons).
 - **No dedicated vector database** was compared; that would be a second change.
 
