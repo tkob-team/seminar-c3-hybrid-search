@@ -6,7 +6,7 @@ Report: [REPORT.md](REPORT.md). Talk (slides, recording link): [TALK.md](TALK.md
 
 ## Requirements
 
-- **Docker** with Compose v2 (`docker compose`). The database container is limited to **2 CPUs and 4 GB RAM**, so the Docker engine needs at least that much free (we used 4 CPUs / 8 GB for the Docker Desktop WSL 2 VM).
+- **Docker** with Compose v2 (`docker compose`). The database container is limited to **2 CPUs and 4 GB RAM**, so the Docker engine needs at least that much free (we used 4 CPUs / 8 GB for the Docker Desktop WSL 2 VM). Start Docker Desktop (`docker desktop start`) if the daemon is not running; otherwise `make` fails with `Could not retrieve status. Is Docker Desktop running?`.
 - **GNU make.** On Windows, install it with `winget install ezwinports.make` (then open a new shell), or run everything from WSL.
 - **Git** and about 400 MB of disk space (the datasets, plus about 136 MB of committed embeddings for three subforums; see [Other subforums](#other-subforums)).
 - **Python 3.12**, only if you need to re-create the embeddings (`make embed`). Everything that talks to PostgreSQL, including the dataset download, runs in a `bench` container (`python:3.12.10-slim-bookworm` with psycopg 3.3.9), so the host needs no PostgreSQL client library. We chose this because Windows Smart App Control blocks the libpq DLL that ships with `psycopg[binary]`.
@@ -39,6 +39,12 @@ A re-embed on another machine may give a different checksum (floating-point diff
 
 ```sh
 make measure
+```
+
+By default `make measure` writes to `results/` and **overwrites the committed main results** (`results/raw.csv`, `summary.csv`, `run_info.txt`). To keep them, write somewhere else with `OUT`:
+
+```sh
+make measure OUT=results/my-run   # any directory inside the repository (the bench container sees only the repo)
 ```
 
 What it does (spec: `notes/S02-cach-do.md` sections 3–5):
