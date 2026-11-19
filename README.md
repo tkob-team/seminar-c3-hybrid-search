@@ -2,7 +2,7 @@
 
 CSC13114 seminar, topic C3: hybrid search (pgvector HNSW + PostgreSQL full-text, fused with RRF) vs vector-only search, measured by recall@10 (%) and p95 latency (ms).
 
-Report: [REPORT.md](REPORT.md). Talk (slides, recording link): [TALK.md](TALK.md).
+Report: [REPORT.md](REPORT.md). Slides: [slides.pdf](slides.pdf). Talk (slides, recording link): [TALK.md](TALK.md).
 
 ## Requirements
 
