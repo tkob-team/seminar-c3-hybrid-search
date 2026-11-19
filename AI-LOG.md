@@ -1,6 +1,6 @@
 # AI Log
 
-One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for discussion, explanations, drafts and slides; **Claude Code** on the team's shared machine for code, measurement and commits. The discussion session wrote the commands, Claude Code ran them and reported back, and the team decided each step.
+One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for discussion, explanations, drafts and slides; **Claude Code** on the team's shared machine for code, measurement and commits. The discussion session wrote the commands, Claude Code ran them and reported back, and the team decided each step. **Codex** ran Hoà's S14 reproduction on his machine and helped document his entries in this log.
 
 > Draft written with Claude from the session history on 2026-11-19. Each member checks and completes the entries for their own tasks, especially **By hand**. Lines marked `<…>` are still to be filled in.
 
@@ -11,7 +11,7 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
 - **Kept:** The structure of `notes/S02`–`S05`: definitions and formulas, the measurement procedure for `make measure`, the decision table for the 15/11 meeting, and the held-fixed list.
 - **Changed:** The first explanation was too dense for us, so we asked for a glossary first, then 5W-1H, then the lesson. AI also corrected two of our misreadings: p95 "ignores slow queries" (it measures them), and recall needing a spread (it is deterministic).
 - **Rejected:** AI's first claim that the topic title's semicolon "means two separate directions". It was AI's own inference, stated as fact. We challenged it, AI said it was only an inference, and the team decided the scope itself: one question, hybrid vs vector-only inside PostgreSQL.
-- **By hand:** Choosing the subforum, model, HNSW parameters, N, k and OR in the 15/11 meeting. Explaining each part to the others. `<Hiệp / Hoà: add what you studied or decided yourselves>`. Hoàng's part (S04) is in Task 8.
+- **By hand:** Choosing the subforum, model, HNSW parameters, N, k and OR in the 15/11 meeting. Explaining each part to the others. `<Hiệp: add what you studied or decided yourself>`. Hoàng's part (S04) is in Task 8. Hoà's part (S03) is in Task 13.
 
 ## Task 2: Building the pipeline and `make measure` (S07–S12)
 
@@ -24,7 +24,7 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
   - **AI was wrong:** the hybrid SQL (from the AI-written `notes/S04` spec) did not break ties inside the full-text CTE, so 2 of 699 queries gave a different top-10 between runs. **Detected by** the check "recall must be identical in all 5 runs". Fixed by adding `d.id` to the ordering (commit `6f5eb7b`).
   - p95 ratios were first computed from rounded medians (21.1× vs 21.2×). Recomputed from unrounded values (`ea6d645`, `6d4fcf8`).
 - **Rejected:** Re-running the embedding on every run; embeddings are computed once and checked by sha256.
-- **By hand:** Starting Docker Desktop, installing make, approving each step and pushing. `<Hoà: add your parts of S07–S08>`. Hoàng's parts (S09–S11) are in Tasks 9–11.
+- **By hand:** Starting Docker Desktop, installing make, approving each step and pushing. Hoàng's parts (S09–S11) are in Tasks 9–11. Hoà's parts (S07 and S08) are in Tasks 14 and 15.
 
 ## Task 3: Explaining the result and measuring more subforums (S12 diagnostics, S23)
 
@@ -55,7 +55,7 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
 
 - **Tool:** Claude (claude.ai), Slides artifact; slide-design rules read from public skills (`anthropics/skills` pptx, `educational-presentation`, `presentation-slides`).
 - **Asked for:** A 10-minute deck for listeners who know nothing about the topic, following the flow problem → solution → cost → demo.
-- **Kept:** The flow, the speaker notes split across the three of us, and figures built inside the slides from `results/`.
+- **Kept:** The flow, the speaker notes split across the three of us, and figures built inside the slides from `results/`. The final 12-slide PDF is in [slides.pdf](slides.pdf), and [TALK.md](TALK.md) links to the PDF and the Claude artifact (`90f3fdb`).
 - **Changed:**
   - Three background colours replaced by one light background, because switching backgrounds was tiring on screen.
   - Minimum text raised from 24 px to 28 px, body to 40 px; paragraphs moved into the speaker notes.
@@ -63,7 +63,7 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
   - The "cost" slide first showed OR vs AND results, which is not a trade-off. It was rebuilt as four costs: latency, storage, tuning knobs, language support.
   - Added real screenshots (the StackExchange duplicate pair, `make demo`, `make measure`); the `make measure` screenshot was first saved as `results/repeat-4` so its numbers are in the log.
 - **Rejected:** Alternating backgrounds (recommended by the public skills) and decorative stock photos.
-- **By hand:** Taking the screenshots; reviewing every slide; `<Hoà: slide edits>`.
+- **By hand:** The team log records taking the screenshots and reviewing the slides. The tracker assigns S15 to Hoà. His individual slide edits and checks are pending his confirmation.
 
 ## Task 6: Demo command (S17 preparation)
 
@@ -76,12 +76,14 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
 
 ## Task 7: Internal rerun on another machine (S14)
 
-- **Tool:** `<Hoà: tool used, if any>`
-- **Asked for:** Follow only the README on a fresh clone, run `make measure`, compare with the team's numbers, and report README gaps.
-- **Kept:** `results/rerun-s14/`, `notes/S14-red-team-noi-bo.md`.
-- **Changed:** The two README gaps found (starting Docker Desktop; `make measure` overwriting `results/`) were fixed in `a0180e2`.
-- **Rejected:** `<Hoà>`
-- **By hand:** `<Hoà: running the rerun, checking the commit and the nDCG difference>`
+- **Tool:** Codex with PowerShell on Hoà's Windows 11 machine (Intel Core i5-12500H, 16 GiB RAM, Docker Desktop 4.99.0).
+- **Asked for:** Clone `main` afresh, follow the README for Android, check the supplied embeddings against SHA-256, run `make measure` once, and report any README gaps and differences from the main results.
+- **Kept:** [S14 notes](notes/S14-red-team-noi-bo.md), [summary.csv](results/rerun-s14/summary.csv) and [run_info.txt](results/rerun-s14/run_info.txt) in `78b2d3f`. Codex ran the benchmark at `1337749`, which contains the `6f5eb7b` full-text tie-break. Setup took 2 min 44 s and `make measure` took 2 min 21 s. Recall@10 matched at 60.63% for A and 50.54% for B. The p95 ratio was 25.14x versus 21.17x on `main`. B's nDCG@10 was 0.4004 versus 0.4010 on `main`. Top-10 results were identical across the five measured rounds on this machine. The cause of the nDCG difference from the team baseline remains unconfirmed.
+- **Changed:**
+  - Requirements omitted starting Docker Desktop when the daemon was down. `docker desktop status` returned `Could not retrieve status. Is Docker Desktop running?` Codex ran `docker desktop start` before setup.
+  - The Run section omitted that `make measure` overwrites tracked results by default. Codex ran on a temporary copy to preserve the fresh clone. The team later documented both gaps, including the `OUT` option, in `a0180e2`.
+- **Rejected:** Re-embedding as a fallback. Hoà required a stop on checksum mismatch. Both checksums matched and Codex reused the committed files.
+- **By hand:** Hoà set the scope, the one-invocation limit, the checksum stop condition and the comparison criteria. He asked for the setup timing, the exact README gaps and confirmation that the run included the tie-break. Codex executed the commands and checked the evidence.
 
 ## Task 8: Embedding, full-text search and RRF notes (S04, Hoàng)
 
@@ -154,6 +156,33 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
 - **Changed:** Placeholders in Tasks 1 and 2 now point to Tasks 8–11 for Hoàng's parts.
 - **Rejected:** Writing the **By hand** lines for Hoàng. Only Hoàng knows what was done by hand, so those lines stay as `<Hoàng: …>` until filled in.
 - **By hand:** `<Hoàng: checking every line of Tasks 8–11 against what actually happened, filling the By hand lines, and adding S21/S22 if AI is used for them>`
+
+## Task 13: pgvector, HNSW and Docker notes (S03, Hoà)
+
+- **Tool:** Claude (claude.ai) for explanations and the note draft, as recorded in Task 1. The note commit `d4101ab` credits Claude Opus 5.5.
+- **Asked for:** Explain pgvector and cosine distance, how `m`, `ef_construction` and `hnsw.ef_search` affect HNSW, and how to set Docker CPU and RAM limits. Record settings for S07 and S09.
+- **Kept:** [S03 notes](notes/S03-pgvector-hnsw-docker.md), including pgvector 0.8.7 on PostgreSQL 18, `vector(384)`, `vector_cosine_ops`, `m = 16`, `ef_construction = 64`, and a database container limited to 2 CPUs and 4 GB.
+- **Changed:** The note records the 15/11 design decision to use `hnsw.ef_search = 100` in both branches so the vector search can return 100 candidates. The pgvector default is 40.
+- **Rejected:** Floating Docker tags (`latest` and `pg18`) because later pulls could use different versions. Iterative scan stayed at its default because the HNSW search has no filter.
+- **By hand:** The tracker assigns S03 to Hoà. His individual reading and checks are pending his confirmation.
+
+## Task 14: Pinned database container (S07, Hoà)
+
+- **Tool:** Claude Code on the shared machine, as recorded in Task 2.
+- **Asked for:** Turn the S03 settings into a Compose service that starts a reproducible PostgreSQL and pgvector instance and reports when it is ready.
+- **Kept:** [docker-compose.yml](docker-compose.yml) from `2f0bc11`. It pins `pgvector/pgvector:0.8.7-pg18-trixie`, limits the database to 2 CPUs and 4 GB, sets `maintenance_work_mem=1GB`, mounts PostgreSQL 18 data under `/var/lib/postgresql`, and checks readiness with `pg_isready`.
+- **Changed:** S09 later added the `bench` service so the PostgreSQL client could run in the container after Windows Smart App Control blocked the host psycopg binary.
+- **Rejected:** Floating image tags, following the S03 decision.
+- **By hand:** Hoà's individual setup and validation steps on the shared machine are pending his confirmation. Codex verified that the database reached healthy status in S14 (Task 7).
+
+## Task 15: Dataset download and checksum verification (S08, Hoà)
+
+- **Tool:** Claude Code on the shared machine, as recorded in Task 2.
+- **Asked for:** Download CQADupStack Android at a pinned Hugging Face revision and verify the three input files before benchmark setup.
+- **Kept:** [scripts/download.py](scripts/download.py) and [data/SHA256SUMS](data/SHA256SUMS) from `def025f`. The Android revision is `e03f271e3f4a75f49787c838a62f671b35bc9004`. The script checks 22,998 documents, 699 queries and 1,696 qrels, then compares the raw files with the SHA-256 manifest.
+- **Changed:** S23 reused the downloader for multiple subforums in `a6d6a8d`. Android retained its pinned revision and expected counts.
+- **Rejected:** None recorded for S08.
+- **By hand:** Hoà's individual checks on the shared machine are pending his confirmation. The S14 download run by Codex passed both the count and SHA-256 checks.
 
 ## Where AI was wrong, and how we found out
 
