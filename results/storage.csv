@@ -1,0 +1,4 @@
+subforum,docs_rows,table_mb,tsv_column_mb,hnsw_index_mb,gin_index_mb,gin_rebuild_s,gin_index_mb_after_rebuild
+android,22998,65.3,12.9,44.9,6.7,0.34,6.7
+mathematica,16705,59.5,15.4,32.6,11.5,,
+gaming,45301,119.3,20.9,88.5,10.9,,
