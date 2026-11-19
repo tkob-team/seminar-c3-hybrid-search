@@ -2,6 +2,8 @@
 
 CSC13114 seminar, topic C3: hybrid search (pgvector HNSW + PostgreSQL full-text, fused with RRF) vs vector-only search, measured by recall@10 (%) and p95 latency (ms).
 
+Report: [REPORT.md](REPORT.md). Talk (slides, recording link): [TALK.md](TALK.md).
+
 ## Requirements
 
 - **Docker** with Compose v2 (`docker compose`). The database container is limited to **2 CPUs and 4 GB RAM**, so the Docker engine needs at least that much free (we used 4 CPUs / 8 GB for the Docker Desktop WSL 2 VM).
