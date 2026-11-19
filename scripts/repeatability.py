@@ -5,7 +5,7 @@ import statistics
 
 from common import RESULTS
 
-dirs = [("1 (main)", RESULTS)] + [(f"{n}", RESULTS / f"repeat-{n}") for n in (2, 3)]
+dirs = [("1 (main)", RESULTS)] + [(f"{n}", RESULTS / f"repeat-{n}") for n in (2, 3, 4)]
 rows = []
 for label, d in dirs:
     with open(d / "summary.csv", encoding="utf-8") as f:
@@ -16,7 +16,7 @@ for label, d in dirs:
                  f"{p95a:.2f}", f"{p95b:.2f}", f"{p95b - p95a:+.2f}", f"{p95b / p95a:.2f}",
                  f"{p50a:.2f}", f"{p50b:.2f}", f"{p50b - p50a:+.2f}", f"{p50b / p50a:.2f}"])
 cols = list(zip(*rows))
-summary = ["median of 3", cols[1][0], cols[2][0]]
+summary = [f"median of {len(rows)}", cols[1][0], cols[2][0]]
 for i, c in enumerate(cols[3:]):
     v = statistics.median(float(x) for x in c)
     summary.append(f"{v:+.2f}" if i in (2, 6) else f"{v:.2f}")
