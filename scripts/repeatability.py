@@ -12,9 +12,10 @@ for label, d in dirs:
         s = {r["metric"]: r for r in csv.DictReader(f)}
     p95a, p95b = float(s["p95 median"]["A_vector_only"]), float(s["p95 median"]["B_hybrid"])
     p50a, p50b = float(s["p50 median"]["A_vector_only"]), float(s["p50 median"]["B_hybrid"])
+    # delta and ratio as computed by measure.py from the unrounded medians
     rows.append([label, s["recall@10"]["A_vector_only"], s["recall@10"]["B_hybrid"],
-                 f"{p95a:.2f}", f"{p95b:.2f}", f"{p95b - p95a:+.2f}", f"{p95b / p95a:.2f}",
-                 f"{p50a:.2f}", f"{p50b:.2f}", f"{p50b - p50a:+.2f}", f"{p50b / p50a:.2f}"])
+                 f"{p95a:.2f}", f"{p95b:.2f}", s["p95 median"]["delta_B_minus_A"], s["p95 median"]["ratio_B_over_A"],
+                 f"{p50a:.2f}", f"{p50b:.2f}", s["p50 median"]["delta_B_minus_A"], s["p50 median"]["ratio_B_over_A"]])
 cols = list(zip(*rows))
 summary = [f"median of {len(rows)}", cols[1][0], cols[2][0]]
 for i, c in enumerate(cols[3:]):
