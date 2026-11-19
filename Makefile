@@ -26,7 +26,7 @@ else
   VENV_PY := .venv/bin/python
 endif
 
-.PHONY: up down bench-image download prepare check measure diagnose embed venv clean-db
+.PHONY: up down bench-image download prepare check measure diagnose demo embed venv clean-db
 
 ## up: start PostgreSQL + pgvector (2 CPUs, 4 GB) and wait until healthy
 up:
@@ -62,6 +62,14 @@ measure: up download bench-image
 ## diagnose: full-text-only recall@10 and example queries (needs a finished `make measure`)
 diagnose: up bench-image
 	$(BENCH) python scripts/diagnose.py
+
+## demo: one question through A and B, top-10 tables with ★ = relevant (host embeds Q, bench runs SQL)
+##   make demo Q="How to use an android phone as a wireless webcam?"
+Q ?=
+export Q
+demo: up download bench-image venv
+	$(VENV_PY) scripts/demo.py --embed
+	$(BENCH) python scripts/demo.py
 
 ## embed: (host) create data[/<subforum>]/emb_*.npy with sentence-transformers; skipped if checksums match
 embed: venv

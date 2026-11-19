@@ -47,6 +47,8 @@ What it does (spec: `notes/S02-cach-do.md` sections 3–5):
 4. Computes recall@10 and nDCG@10 against the qrels. A result whose id equals the query id is removed first. It also counts per-query wins, losses and ties, and checks that the top-10 lists are identical in all 5 runs.
 5. Computes p95 and p50 for each run and branch (nearest-rank), then reports the median (min–max) over the 5 runs, the difference B − A, and the ratio B / A.
 
+To look at one question, `make demo Q="How to use an android phone as a wireless webcam?"` prints the top-10 of A and B (★ = relevant by qrels when Q is a dataset query) and the ranks of the duplicate in the vector and full-text lists; the host `.venv` embeds Q, the `bench` container runs the SQL.
+
 A full run takes a few minutes on our machine. Other targets: `make down` stops the database, and `make clean-db` also deletes its volume.
 
 ## Output (results/)
