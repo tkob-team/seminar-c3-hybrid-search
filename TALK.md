@@ -1,6 +1,6 @@
 # Talk
 
-Link to recording (≤ 8 min): https://youtu.be/auLsyQs6zd8
+Link to recording (≤ 8 min): https://youtu.be/LjNHJYwV4Gk
 
 ## Timestamps
 
