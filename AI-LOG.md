@@ -11,7 +11,7 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
 - **Kept:** The structure of `notes/S02`–`S05`: definitions and formulas, the measurement procedure for `make measure`, the decision table for the 15/11 meeting, and the held-fixed list.
 - **Changed:** The first explanation was too dense for us, so we asked for a glossary first, then 5W-1H, then the lesson. AI also corrected two of our misreadings: p95 "ignores slow queries" (it measures them), and recall needing a spread (it is deterministic).
 - **Rejected:** AI's first claim that the topic title's semicolon "means two separate directions". It was AI's own inference, stated as fact. We challenged it, AI said it was only an inference, and the team decided the scope itself: one question, hybrid vs vector-only inside PostgreSQL.
-- **By hand:** Choosing the subforum, model, HNSW parameters, N, k and OR in the 15/11 meeting. Explaining each part to the others. `<Hiệp: add what you studied or decided yourself>`. Hoàng's part (S04) is in Task 8. Hoà's part (S03) is in Task 13.
+- **By hand:** Choosing the subforum, model, HNSW parameters, N, k and OR in the 15/11 meeting. Explaining each part to the others. Hiệp: studying every part of the seminar until he could explain it in his own words (the glossary, 5W-1H and lesson docs, then `notes/S02`–`S05`); watching YouTube videos on vector search and embeddings to fill the gaps; answering a self-test on recall@10, p95 and the dataset choice and reworking the wrong answers; questioning AI claims instead of accepting them (the semicolon reading of the topic title, the claim that p95 differences were noise); rehearsing his slides from the study guide. Hoàng's part (S04) is in Task 8. Hoà's part (S03) is in Task 13.
 
 ## Task 2: Building the pipeline and `make measure` (S07–S12)
 
@@ -55,7 +55,7 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
 
 - **Tool:** Claude (claude.ai), Slides artifact; slide-design rules read from public skills (`anthropics/skills` pptx, `educational-presentation`, `presentation-slides`).
 - **Asked for:** A 10-minute deck for listeners who know nothing about the topic, following the flow problem → solution → cost → demo.
-- **Kept:** The flow, the speaker notes split across the three of us, and figures built inside the slides from `results/`. The final 12-slide PDF is in [slides.pdf](slides.pdf), and [TALK.md](TALK.md) links to the PDF and the Claude artifact (`90f3fdb`).
+- **Kept:** The flow, the speaker notes split across the three of us, and figures built inside the slides from `results/`. The final 12-slide PDF is in [slides.pdf](slides.pdf), and [TALK.md](TALK.md) links to the PDF and the recorded video (`90f3fdb`).
 - **Changed:**
   - Three background colours replaced by one light background, because switching backgrounds was tiring on screen.
   - Minimum text raised from 24 px to 28 px, body to 40 px; paragraphs moved into the speaker notes.
