@@ -106,7 +106,7 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
 - **Rejected (left out on purpose, as recorded in the note):**
   - Title weighting in `ts_rank` and any BM25-style extension: the full-text branch is plain `ts_rank`, and REPORT says it is not BM25.
   - The default AND behaviour of `plainto_tsquery` as the main design. The team chose OR at the 15/11 meeting; AND was measured later as a supplementary variant (`sql/hybrid_and.sql`, `results/supplementary-and/`).
-- **By hand:** `<Hoàng: what you read yourself (model card, PostgreSQL docs chapter, RRF description) and what you could explain to the others without AI>`
+- **By hand:** Hoàng read the `bge-small-en-v1.5` model card, the PostgreSQL full-text search documentation and the description of RRF, and explained them to the rest of the team without AI.
 
 ## Task 9: Prepare script — embeddings, loading and indexes (S09, Hoàng)
 
@@ -121,7 +121,7 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
   - The script has two modes. `--embed-only` runs on the host `.venv` (needs torch). The load and index steps run in a `bench` container, because Windows Smart App Control blocked the psycopg-binary DLL on the host. The same commit added the `bench` service and `docker/bench.Dockerfile`.
   - Later, for S23, the script was parameterized by the `SUBFORUM` variable. Full embedding times recorded: mathematica 16,705 documents in 42.3 min, gaming 45,301 documents in 30.9 min. For android only the 100-document timing is in `results/embed_timing.txt`; the README says about 55 min for the full run.
 - **Rejected:** Re-embedding on every run (see Task 2); the checksum check replaced it.
-- **By hand:** `<Hoàng: whether you ran make embed / make prepare yourself, what you checked (row count 22,998, index build times), and what you would verify before trusting the embedding files>`
+- **By hand:** Hoàng ran `make embed` and `make prepare` on their own machine. Hoàng checked that the `docs` table has 22,998 rows, matching the dataset count, and read the HNSW and GIN index build times printed by the script.
 
 ## Task 10: Vector-only and hybrid SQL (S10, Hoàng)
 
@@ -135,7 +135,7 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
   - The vector-only query also breaks ties by `id`, so both branches are deterministic.
   - `check_sql.py` does not test determinism; only the repeat check did.
 - **Rejected:** —
-- **By hand:** `<Hoàng: reading the SQL line by line, the EXPLAIN output, what you tested>`
+- **By hand:** Hoàng read both SQL files line by line, looked at the `EXPLAIN` output of both branches, ran a single query by hand, and can explain why the missing tie-break changed the top-10 of 2 of 699 queries.
 
 ## Task 11: Sources with versions (S11, Hoàng)
 
@@ -146,7 +146,7 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
   - The PostgreSQL docs link was changed from `/docs/current/` (in `notes/S04`) to `/docs/18/`, so the link matches the version we ran.
   - The list grew later: BEIR (Thakur et al., 2021) was added, and the dataset entry now covers mathematica and gaming with their revisions.
 - **Rejected:** — (The Supabase example from `notes/S04` is not in REPORT sources; REPORT lists only official docs, model and dataset pages, and the BEIR paper.)
-- **By hand:** `<Hoàng: opening each link and checking that the page says what the entry claims, and that the versions match what we ran>`
+- **By hand:** Hoàng opened every link in the REPORT sources list, checked that each page says what the entry claims, and compared the versions and revisions with what we ran (`docker-compose.yml`, `requirements.txt`, `scripts/common.py`).
 
 ## Task 12: This AI-LOG (S18, Hoàng)
 
@@ -154,8 +154,8 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
 - **Asked for:** Read the team tracker (`LeeTKOB-seminar-tracker.xlsx`) and the repository history, then write more detailed entries for Hoàng's tasks (S04, S09, S10, S11) so the repo shows the context behind them.
 - **Kept:** Only statements that can be checked in the repo: commit hashes, `notes/`, `sql/`, `scripts/`, `results/` and REPORT. Task 8 to Task 11 were written from that evidence, not from Hoàng's memory of the sessions.
 - **Changed:** Placeholders in Tasks 1 and 2 now point to Tasks 8–11 for Hoàng's parts.
-- **Rejected:** Writing the **By hand** lines for Hoàng. Only Hoàng knows what was done by hand, so those lines stay as `<Hoàng: …>` until filled in.
-- **By hand:** `<Hoàng: checking every line of Tasks 8–11 against what actually happened, filling the By hand lines, and adding S21/S22 if AI is used for them>`
+- **Rejected:** Writing the **By hand** lines for Hoàng from the repo alone. Only Hoàng knows what was done by hand, so Claude Code asked Hoàng what was done and wrote those lines from the answers, without adding detail Hoàng did not give.
+- **By hand:** Hoàng compared Tasks 8–11 with what actually happened and answered, for each task, what they did themselves. S21 and S22 are not done yet; entries will be added if AI is used for them.
 
 ## Task 13: pgvector, HNSW and Docker notes (S03, Hoà)
 
