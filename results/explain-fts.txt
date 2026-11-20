@@ -1,0 +1,66 @@
+subforum: android; statement = CTE q + fts of sql/hybrid.sql:
+
+WITH q AS (
+  SELECT to_tsquery('english', replace(plainto_tsquery('english', $1)::text, '&', '|')) AS tq
+)
+SELECT d.id, row_number() OVER (ORDER BY ts_rank(d.tsv, q.tq) DESC, d.id) AS r
+  FROM docs d, q WHERE d.tsv @@ q.tq
+  ORDER BY ts_rank(d.tsv, q.tq) DESC, d.id LIMIT 100
+
+SUMMARY
+query 2461 (broad OR): "How to use an android phone as a wireless webcam?"
+documents matching OR tsquery: 18641 / 22998 = 81.1 %
+scan types: Seq Scan; execution time: 38.405 ms
+query 1102 (narrowest OR): "What's with the Donut/Froyo?"
+documents matching OR tsquery: 0 / 22998 = 0.0 %
+scan types: Bitmap Heap Scan, Bitmap Index Scan; execution time: 0.039 ms
+
+================================================================================
+query 2461 (broad OR): "How to use an android phone as a wireless webcam?"
+documents matching OR tsquery: 18641 / 22998 = 81.1 %
+scan types: Seq Scan; execution time: 38.405 ms
+--------------------------------------------------------------------------------
+Limit  (cost=5283.20..5285.45 rows=100 width=17) (actual time=37.527..37.548 rows=100.00 loops=1)
+  Buffers: shared hit=15742
+  ->  WindowAgg  (cost=5283.20..5714.55 rows=19172 width=17) (actual time=37.526..37.541 rows=100.00 loops=1)
+        Window: w1 AS (ORDER BY (ts_rank(d.tsv, '''use'' | ''android'' | ''phone'' | ''wireless'' | ''webcam'''::tsquery)), d.id ROWS UNBOUNDED PRECEDING)
+        Storage: Memory  Maximum Storage: 17kB
+        Buffers: shared hit=15742
+        ->  Sort  (cost=5283.18..5331.11 rows=19172 width=9) (actual time=37.518..37.521 rows=100.00 loops=1)
+              Sort Key: (ts_rank(d.tsv, '''use'' | ''android'' | ''phone'' | ''wireless'' | ''webcam'''::tsquery)) DESC, d.id
+              Sort Method: quicksort  Memory: 1349kB
+              Buffers: shared hit=15742
+              ->  Seq Scan on docs d  (cost=0.00..3919.40 rows=19172 width=9) (actual time=0.016..23.391 rows=18641.00 loops=1)
+                    Filter: (tsv @@ '''use'' | ''android'' | ''phone'' | ''wireless'' | ''webcam'''::tsquery)
+                    Rows Removed by Filter: 4357
+                    Buffers: shared hit=15736
+Planning:
+  Buffers: shared hit=26 read=7
+Planning Time: 2.393 ms
+Execution Time: 38.405 ms
+
+================================================================================
+query 1102 (narrowest OR): "What's with the Donut/Froyo?"
+documents matching OR tsquery: 0 / 22998 = 0.0 %
+scan types: Bitmap Heap Scan, Bitmap Index Scan; execution time: 0.039 ms
+--------------------------------------------------------------------------------
+Limit  (cost=271.32..272.87 rows=70 width=17) (actual time=0.013..0.013 rows=0.00 loops=1)
+  Buffers: shared hit=4
+  ->  WindowAgg  (cost=271.32..272.87 rows=70 width=17) (actual time=0.012..0.013 rows=0.00 loops=1)
+        Window: w1 AS (ORDER BY (ts_rank(d.tsv, '''donut/froyo'''::tsquery)), d.id ROWS UNBOUNDED PRECEDING)
+        Buffers: shared hit=4
+        ->  Sort  (cost=271.30..271.47 rows=70 width=9) (actual time=0.012..0.012 rows=0.00 loops=1)
+              Sort Key: (ts_rank(d.tsv, '''donut/froyo'''::tsquery)) DESC, d.id
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=4
+              ->  Bitmap Heap Scan on docs d  (cost=17.45..269.15 rows=70 width=9) (actual time=0.010..0.010 rows=0.00 loops=1)
+                    Recheck Cond: (tsv @@ '''donut/froyo'''::tsquery)
+                    Buffers: shared hit=4
+                    ->  Bitmap Index Scan on docs_tsv_gin  (cost=0.00..17.43 rows=70 width=0) (actual time=0.007..0.007 rows=0.00 loops=1)
+                          Index Cond: (tsv @@ '''donut/froyo'''::tsquery)
+                          Index Searches: 1
+                          Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=1
+Planning Time: 0.140 ms
+Execution Time: 0.039 ms
