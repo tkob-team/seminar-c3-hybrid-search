@@ -14,6 +14,10 @@ scan types: Seq Scan; execution time: 38.405 ms
 query 1102 (narrowest OR): "What's with the Donut/Froyo?"
 documents matching OR tsquery: 0 / 22998 = 0.0 %
 scan types: Bitmap Heap Scan, Bitmap Index Scan; execution time: 0.039 ms
+query 58793 (narrowest OR with >= 10 matches): "What is LOST.DIR and what is its purpose?"
+documents matching OR tsquery: 13 / 22998 = 0.1 %
+scan types: Bitmap Heap Scan, Bitmap Index Scan; execution time: 0.104 ms
+note: in query 1102 the parser reads "donut/froyo" as one token, so the OR tsquery matches 0 documents (degenerate case).
 
 ================================================================================
 query 2461 (broad OR): "How to use an android phone as a wireless webcam?"
@@ -64,3 +68,31 @@ Planning:
   Buffers: shared hit=1
 Planning Time: 0.140 ms
 Execution Time: 0.039 ms
+
+================================================================================
+query 58793 (narrowest OR with >= 10 matches): "What is LOST.DIR and what is its purpose?"
+documents matching OR tsquery: 13 / 22998 = 0.1 %
+scan types: Bitmap Heap Scan, Bitmap Index Scan; execution time: 0.104 ms
+--------------------------------------------------------------------------------
+Limit  (cost=508.65..510.88 rows=100 width=17) (actual time=0.064..0.068 rows=13.00 loops=1)
+  Buffers: shared hit=37
+  ->  WindowAgg  (cost=508.65..511.78 rows=140 width=17) (actual time=0.063..0.066 rows=13.00 loops=1)
+        Window: w1 AS (ORDER BY (ts_rank(d.tsv, '''lost.dir'' | ''purpo'''::tsquery)), d.id ROWS UNBOUNDED PRECEDING)
+        Storage: Memory  Maximum Storage: 17kB
+        Buffers: shared hit=37
+        ->  Sort  (cost=508.63..508.98 rows=140 width=9) (actual time=0.060..0.061 rows=13.00 loops=1)
+              Sort Key: (ts_rank(d.tsv, '''lost.dir'' | ''purpo'''::tsquery)) DESC, d.id
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=37
+              ->  Bitmap Heap Scan on docs d  (cost=30.77..503.64 rows=140 width=9) (actual time=0.018..0.045 rows=13.00 loops=1)
+                    Recheck Cond: (tsv @@ '''lost.dir'' | ''purpo'''::tsquery)
+                    Heap Blocks: exact=12
+                    Buffers: shared hit=31
+                    ->  Bitmap Index Scan on docs_tsv_gin  (cost=0.00..30.74 rows=140 width=0) (actual time=0.010..0.010 rows=13.00 loops=1)
+                          Index Cond: (tsv @@ '''lost.dir'' | ''purpo'''::tsquery)
+                          Index Searches: 1
+                          Buffers: shared hit=7
+Planning:
+  Buffers: shared hit=33
+Planning Time: 0.177 ms
+Execution Time: 0.104 ms
