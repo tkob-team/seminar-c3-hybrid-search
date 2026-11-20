@@ -49,7 +49,7 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
   - **AI was wrong:** the REPORT said "the B/A ratio should transfer better" between machines. **Refuted** by repeat-4 (28.7×) and the S14 rerun (25.1×). Rewritten as a measured range: +40 to +48 ms, 19–29×.
   - Added the storage cost and missing Vietnamese text-search config after measuring them (`results/storage.csv`, `results/textsearch-configs.txt`).
 - **Rejected:** Changing the design after seeing hybrid lose. The agreed OR design stays the main result; AND is labeled supplementary.
-- **By hand:** Reading and approving the final text. `<team: add edits you made yourselves>`
+- **By hand:** Reading and approving the final text.
 
 ## Task 5: Slides (S15)
 
@@ -63,7 +63,7 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
   - The "cost" slide first showed OR vs AND results, which is not a trade-off. It was rebuilt as four costs: latency, storage, tuning knobs, language support.
   - Added real screenshots (the StackExchange duplicate pair, `make demo`, `make measure`); the `make measure` screenshot was first saved as `results/repeat-4` so its numbers are in the log.
 - **Rejected:** Alternating backgrounds (recommended by the public skills) and decorative stock photos.
-- **By hand:** The team log records taking the screenshots and reviewing the slides. The tracker assigns S15 to Hoà. His individual slide edits and checks are pending his confirmation.
+- **By hand:** The team took screenshots and reviewed the deck. Hoà owned S15. Individual slide edits and checks are unrecorded.
 
 ## Task 6: Demo command (S17 preparation)
 
@@ -164,7 +164,7 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
 - **Kept:** [S03 notes](notes/S03-pgvector-hnsw-docker.md), including pgvector 0.8.7 on PostgreSQL 18, `vector(384)`, `vector_cosine_ops`, `m = 16`, `ef_construction = 64`, and a database container limited to 2 CPUs and 4 GB.
 - **Changed:** The note records the 15/11 design decision to use `hnsw.ef_search = 100` in both branches so the vector search can return 100 candidates. The pgvector default is 40.
 - **Rejected:** Floating Docker tags (`latest` and `pg18`) because later pulls could use different versions. Iterative scan stayed at its default because the HNSW search has no filter.
-- **By hand:** The tracker assigns S03 to Hoà. His individual reading and checks are pending his confirmation.
+- **By hand:** Hoà owned S03. The note records the pgvector README as a source consulted on 18/11 for the Docker image tag and HNSW settings, including `hnsw.ef_search`. The record leaves individual reading and checks unattributed.
 
 ## Task 14: Pinned database container (S07, Hoà)
 
@@ -173,7 +173,7 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
 - **Kept:** [docker-compose.yml](docker-compose.yml) from `2f0bc11`. It pins `pgvector/pgvector:0.8.7-pg18-trixie`, limits the database to 2 CPUs and 4 GB, sets `maintenance_work_mem=1GB`, mounts PostgreSQL 18 data under `/var/lib/postgresql`, and checks readiness with `pg_isready`.
 - **Changed:** S09 later added the `bench` service so the PostgreSQL client could run in the container after Windows Smart App Control blocked the host psycopg binary.
 - **Rejected:** Floating image tags, following the S03 decision.
-- **By hand:** Hoà's individual setup and validation steps on the shared machine are pending his confirmation. Codex verified that the database reached healthy status in S14 (Task 7).
+- **By hand:** Setup on the shared machine is recorded at team level in Task 2. Hoà's individual steps are unrecorded. On Hoà's own machine in S14, Codex started Docker Desktop and verified that `make up` brought the database to healthy status (Task 7).
 
 ## Task 15: Dataset download and checksum verification (S08, Hoà)
 
@@ -182,7 +182,7 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
 - **Kept:** [scripts/download.py](scripts/download.py) and [data/SHA256SUMS](data/SHA256SUMS) from `def025f`. The Android revision is `e03f271e3f4a75f49787c838a62f671b35bc9004`. The script checks 22,998 documents, 699 queries and 1,696 qrels, then compares the raw files with the SHA-256 manifest.
 - **Changed:** S23 reused the downloader for multiple subforums in `a6d6a8d`. Android retained its pinned revision and expected counts.
 - **Rejected:** None recorded for S08.
-- **By hand:** Hoà's individual checks on the shared machine are pending his confirmation. The S14 download run by Codex passed both the count and SHA-256 checks.
+- **By hand:** Hoà's individual checks on the shared machine are unrecorded. Hoà required a checksum check for S14 on his own machine. Codex ran `make download` and verified 22,998 documents, 699 queries, 1,696 qrels and matching SHA-256 hashes for the raw dataset (Task 7).
 
 ## Where AI was wrong, and how we found out
 
