@@ -49,7 +49,7 @@ RRF then weighs both lists equally. A document ranked about 30th in *both* lists
 
 The loss shrinks as the OR query gets narrower: −10.1 → −8.4 → −6.5 pp for matched share 41% → 31% → 14%. With only three subforums, this is a pattern, not a proof.
 
-**Why it is slower.** Broad OR queries make PostgreSQL scan the table instead of using the GIN index, and compute `ts_rank` for every matching row.
+**Why it is slower.** Broad OR queries make PostgreSQL scan the table instead of using the GIN index, and compute `ts_rank` for every matching row (`results/explain-fts.txt`).
 
 **Other costs.** The full-text branch adds a tsvector column and a GIN index: 19.6 / 26.9 / 31.8 MB (android / mathematica / gaming), updated on every write; rebuilding the GIN index on android took 0.34 s. PostgreSQL ships 30 text search configurations and none is Vietnamese, so Vietnamese text would fall back to `simple` (no stemming) (`results/storage.csv`, `results/textsearch-configs.txt`).
 
@@ -69,7 +69,7 @@ The loss shrinks as the OR query gets narrower: −10.1 → −8.4 → −6.5 pp
 
 ## Limits
 
-- **Embedding model:** only one, and its card does not list its training data. It may have seen StackExchange, which would make the vector baseline unusually strong here.
+- **Embedding model:** only one. Its card links a released training set (BAAI-MTP, technical report 2023-09-15) that we did not inspect, so we did not check whether it contains StackExchange duplicates, which would make the vector baseline unusually strong here.
 - **Full-text ranking:** `ts_rank` is not BM25, and we tested no other full-text engine.
 - **Fusion settings:** RRF k = 60, N = 100, equal weights; no other values were tested.
 - **Subforums:** 3 of 12. mathematica and gaming were chosen after the android result, by a criterion written down before measuring them (`notes/S23-subforum-khac.md`, `results/subforum-screening.csv`). All measured subforums are reported here.

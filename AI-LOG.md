@@ -2,7 +2,7 @@
 
 One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for discussion, explanations, drafts and slides; **Claude Code** on the team's shared machine for code, measurement and commits. The discussion session wrote the commands, Claude Code ran them and reported back, and the team decided each step. **Codex** ran Hoà's S14 reproduction on his machine and helped document his entries in this log.
 
-> Draft written with Claude from the session history on 2026-11-19. Each member checks and completes the entries for their own tasks, especially **By hand**. Lines marked `<…>` are still to be filled in.
+> Draft written with Claude from the session history on 2026-11-19. Each member checks and completes the entries for their own tasks, especially **By hand**.
 
 ## Task 1: Learning the topic and the measurement method (S02–S05)
 
@@ -184,6 +184,18 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
 - **Rejected:** None recorded for S08.
 - **By hand:** Hoà's individual checks on the shared machine are unrecorded. Hoà required a checksum check for S14 on his own machine. Codex ran `make download` and verified 22,998 documents, 699 queries, 1,696 qrels and matching SHA-256 hashes for the raw dataset (Task 7).
 
+## Task 16: Final checks, evidence and submission (S13, S17, S19, S20; 20–24 Nov)
+
+- **Tool:** Claude (claude.ai) for checks and drafts; Claude Code for edits, EXPLAIN runs and packaging.
+- **Asked for:** an EXPLAIN plan as evidence for "broad OR queries scan the table"; per-query answer counts; drafts of the video description and the Facebook post; a check of every tool fact in REPORT and slides against official sources; a SELF_ASSESSMENT draft; the submission zip.
+- **Kept:** `results/explain-fts.txt` (broad query: Seq Scan, 38.4 ms; narrow query with 13 matches: GIN Bitmap Index Scan, 0.10 ms), cited in REPORT; the README section "What to expect when you re-run".
+- **Changed:**
+  - **AI was wrong:** the REPORT draft said the model card "does not list its training data". **Detected** when we opened the card on 24 Nov: it links the released BAAI-MTP training set and the technical report. Rewritten (`09ccf8f`).
+  - **AI was wrong:** the discussion session's command said nDCG@10 is identical in every rerun. Claude Code refused to write that, because `results/rerun-s14` gives 0.4004 vs 0.4010 (`09ccf8f`).
+  - The first narrow EXPLAIN query matched 0 documents ("donut/froyo" is parsed as one token); replaced by a narrow query with 13 matches (`ea28c7e`).
+- **Rejected:** removing the `.npy` files from the zip to make it smaller; the zip keeps the full repository.
+- **By hand:** Hiệp re-recorded the audio of one video segment, posted the Facebook vote post, decided to keep slide 11 as recorded, and chose the self-assessed total.
+
 ## Where AI was wrong, and how we found out
 
 | What AI got wrong | How it was detected | Fix |
@@ -193,3 +205,5 @@ One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for d
 | "The loss follows full-text/vector recall" | The numbers did not follow that order when placed side by side | REPORT uses the OR match share |
 | "The B/A ratio transfers between machines" | repeat-4 (28.7×) and S14 (25.1×) fell outside it | REPORT reports the measured range |
 | The topic scope stated as fact from the title's punctuation | We asked why, and AI said it was only an inference | The team decided the scope |
+| The model card "does not list its training data" (REPORT draft) | We opened the card on 24 Nov: it links the released BAAI-MTP training set and the technical report | `09ccf8f` |
+| "nDCG@10 is identical in every rerun" (discussion-session command) | Claude Code checked `results/rerun-s14`: 0.4004 vs 0.4010 | `09ccf8f` |
