@@ -49,7 +49,7 @@ RRF then weighs both lists equally. A document ranked about 30th in *both* lists
 
 The loss shrinks as the OR query gets narrower: −10.1 → −8.4 → −6.5 pp for matched share 41% → 31% → 14%. With only three subforums, this is a pattern, not a proof.
 
-**Why it is slower.** Broad OR queries make PostgreSQL scan the table instead of using the GIN index, and compute `ts_rank` for every matching row.
+**Why it is slower.** Broad OR queries make PostgreSQL scan the table instead of using the GIN index, and compute `ts_rank` for every matching row (`results/explain-fts.txt`).
 
 **Other costs.** The full-text branch adds a tsvector column and a GIN index: 19.6 / 26.9 / 31.8 MB (android / mathematica / gaming), updated on every write; rebuilding the GIN index on android took 0.34 s. PostgreSQL ships 30 text search configurations and none is Vietnamese, so Vietnamese text would fall back to `simple` (no stemming) (`results/storage.csv`, `results/textsearch-configs.txt`).
 
