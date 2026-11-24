@@ -41,7 +41,7 @@ Recall@10 was identical in all 5 runs of every measurement, so it has no spread.
 
 nDCG@10 (secondary) drops the same way (0.476 → 0.401, 0.297 → 0.238, 0.561 → 0.507). Four separate `make measure` runs on android (18–19 Nov) gave p95 B = 44.80 / 44.28 / 43.40 / 41.52 ms (A = 2.12 / 2.33 / 2.25 / 1.44 ms) with identical recall.
 
-**Rerun on another machine (S14):** i5-12500H, 16 GB, Windows 11, Docker Desktop 4.99 on WSL2, commit `1337749`, setup 2 min 44 s. recall@10 and per-query better/worse/same were identical (60.63 / 50.54; 33 / 133 / 533). nDCG@10 B was 0.4004 vs 0.4010 (cause not determined; possibly the rebuilt HNSW index). p95 A = 1.98 ms, B = 49.70 ms (+47.7 ms, 25.1×). The rerun found two README gaps, now fixed (`notes/S14-red-team-noi-bo.md`).
+**Rerun on another machine (S14):** i5-12500H, 16 GB, Windows 11, Docker Desktop 4.99 on WSL2, commit `1337749`, setup 2 min 44 s. recall@10 and per-query better/worse/same were identical (60.63 / 50.54; 33 / 133 / 533). nDCG@10 B was 0.4004 vs 0.4010, likely because of the HNSW index rebuilt on that machine: its vector-only top-10 differs for 13 of 699 queries, while the full-text branch and the fusion are deterministic (`results/rerun-s14/raw.csv` vs `results/raw.csv`). p95 A = 1.98 ms, B = 49.70 ms (+47.7 ms, 25.1×). The rerun found two README gaps, now fixed (`notes/S14-red-team-noi-bo.md`).
 
 **Why hybrid lost.** The median OR query matches 41% of the android corpus (mathematica 31%, gaming 14%). `ts_rank`, which is not BM25, ranks these thousands of weak matches poorly. So full-text alone reaches only 35.4% recall@10, against 60.6% for vector (mathematica 19.2 vs 41.7, gaming 47.3 vs 70.0).
 

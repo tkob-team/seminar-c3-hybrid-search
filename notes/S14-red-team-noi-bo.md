@@ -1,7 +1,7 @@
 # S14 — Red-team nội bộ: chạy lại trên máy khác
 
 > Người chạy: Hoà · Ngày chạy: 18/11/2026 (kết thúc 15:48 UTC) · Ghi lại: 19/11/2026
-> Kết quả thô: [results/rerun-s14/](../results/rerun-s14/) (`summary.csv`, `run_info.txt`)
+> Kết quả thô: [results/rerun-s14/](../results/rerun-s14/) (`summary.csv`, `run_info.txt`, `raw.csv`)
 
 ## Máy và phiên bản
 
