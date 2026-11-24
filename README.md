@@ -61,7 +61,7 @@ A full run takes a few minutes on our machine. Other targets: `make down` stops 
 
 ## What to expect when you re-run
 
-- **Identical:** recall@10 (60.63 % A, 50.54 % B on android) and the per-query better / worse / same counts (33 / 133 / 533) were the same in every run on both of our machines. nDCG@10 was identical across the four runs on our main machine (B 0.4010); the clean-clone rerun on a second machine gave B 0.4004, likely because the HNSW index rebuilt there changes the vector-only top-10 for 13 of 699 queries (`results/rerun-s14/raw.csv`).
+- **Identical:** recall@10 (60.63 % A, 50.54 % B on android) and the per-query better / worse / same counts (33 / 133 / 533) were the same in every run on both of our machines. On another machine the HNSW index is rebuilt and can change a few top-10 lists (13 of 699 vector-only queries on our second machine), so recall@10 may differ slightly; on our second machine it did not. nDCG@10 was identical across the four runs on our main machine (B 0.4010); the clean-clone rerun on a second machine gave B 0.4004, likely because the HNSW index rebuilt there changes the vector-only top-10 for 13 of 699 queries (`results/rerun-s14/raw.csv`).
 - **Machine-dependent:** p95. Over 5 measurements on our 2 machines, hybrid-OR added +40 to +48 ms p95 (19–29× vector-only); see `results/repeatability.csv` and `results/rerun-s14/summary.csv`. Expect different milliseconds on your machine.
 
 ## Output (results/)
