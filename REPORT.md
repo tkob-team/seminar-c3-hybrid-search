@@ -69,7 +69,7 @@ The loss shrinks as the OR query gets narrower: −10.1 → −8.4 → −6.5 pp
 
 ## Limits
 
-- **Embedding model:** only one, and its card does not list its training data. It may have seen StackExchange, which would make the vector baseline unusually strong here.
+- **Embedding model:** only one. Its card links a released training set (BAAI-MTP, technical report 2023-09-15) that we did not inspect, so we did not check whether it contains StackExchange duplicates, which would make the vector baseline unusually strong here.
 - **Full-text ranking:** `ts_rank` is not BM25, and we tested no other full-text engine.
 - **Fusion settings:** RRF k = 60, N = 100, equal weights; no other values were tested.
 - **Subforums:** 3 of 12. mathematica and gaming were chosen after the android result, by a criterion written down before measuring them (`notes/S23-subforum-khac.md`, `results/subforum-screening.csv`). All measured subforums are reported here.

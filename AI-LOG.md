@@ -2,7 +2,7 @@
 
 One entry per task where AI tools were used. Tools: **Claude (claude.ai)** for discussion, explanations, drafts and slides; **Claude Code** on the team's shared machine for code, measurement and commits. The discussion session wrote the commands, Claude Code ran them and reported back, and the team decided each step. **Codex** ran Hoà's S14 reproduction on his machine and helped document his entries in this log.
 
-> Draft written with Claude from the session history on 2026-11-19. Each member checks and completes the entries for their own tasks, especially **By hand**. Lines marked `<…>` are still to be filled in.
+> Draft written with Claude from the session history on 2026-11-19. Each member checks and completes the entries for their own tasks, especially **By hand**.
 
 ## Task 1: Learning the topic and the measurement method (S02–S05)
 
